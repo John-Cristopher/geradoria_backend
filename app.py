@@ -98,18 +98,6 @@ def generate():
             400,
         )
 
-    # Validação 3: Filtro de segurança para itens absurdos
-    if not verificar_seguranca(ingredientes):
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "A lista contém itens inválidos ou impróprios para consumo humano.",
-                }
-            ),
-            400,
-        )
-
     try:
         # Pede para o Gemini gerar a receita (retorna como string JSON)
         receita_json_string = generate_recipe(ingredientes)
