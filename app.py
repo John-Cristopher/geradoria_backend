@@ -29,7 +29,9 @@ CORS(app)
 
 def generate_recipe(ingredientes):
     if client is None:
-        raise RuntimeError("O cliente Gemini não foi inicializado. Verifique a chave de API.")
+        raise RuntimeError(
+            "O cliente Gemini não foi inicializado. Verifique a chave de API."
+        )
 
     # Junta os ingredientes enviados em uma única linha de texto
     lista_ingredientes = ", ".join(ingredientes)
@@ -43,6 +45,7 @@ def generate_recipe(ingredientes):
             system_instruction=SYSTEM_INSTRUCTION,
             response_mime_type="application/json",  # Força a saída em formato JSON
             response_schema=RECEITA_SCHEMA,  # Segue o esquema do config.py
+            temperature=0.65,
         ),
     )
     return response.text
@@ -90,6 +93,18 @@ def generate():
                 {
                     "status": "error",
                     "message": "Você precisa fornecer no mínimo 3 ingredientes.",
+                }
+            ),
+            400,
+        )
+
+    # Validação 3: Filtro de segurança para itens absurdos
+    if not verificar_seguranca(ingredientes):
+        return (
+            jsonify(
+                {
+                    "status": "error",
+                    "message": "A lista contém itens inválidos ou impróprios para consumo humano.",
                 }
             ),
             400,
