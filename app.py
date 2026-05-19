@@ -15,6 +15,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Garante que a chave existe antes de iniciar o cliente
+client = None
 if GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -27,6 +28,9 @@ CORS(app)
 
 
 def generate_recipe(ingredientes):
+    if client is None:
+        raise RuntimeError("O cliente Gemini não foi inicializado. Verifique a chave de API.")
+
     # Junta os ingredientes enviados em uma única linha de texto
     lista_ingredientes = ", ".join(ingredientes)
     conteudo_prompt = f"Crie uma receita utilizando obrigatoriamente estes ingredientes: {lista_ingredientes}."
